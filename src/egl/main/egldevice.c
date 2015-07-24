@@ -1,8 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2008 VMware, Inc.
- * Copyright 2009-2010 Chia-I Wu <olvaffe@gmail.com>
- * Copyright 2010 LunarG, Inc.
+ * Copyright 2015 Collabora
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -28,54 +26,67 @@
  **************************************************************************/
 
 
-#ifndef EGLTYPEDEFS_INCLUDED
-#define EGLTYPEDEFS_INCLUDED
-
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
-#include "eglcompiler.h"
+#include "egldevice.h"
+#include "eglglobals.h"
+#include "egltypedefs.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef struct {
+   /* device list */
+   _EGLDevice *devices;
 
-typedef struct _egl_api _EGLAPI;
+} _EGLDeviceInfo;
 
-typedef struct _egl_array _EGLArray;
+static _EGLDeviceInfo *
+_eglEnsureDeviceInfo(void)
+{
+   _EGLDeviceInfo *info;
 
-typedef struct _egl_config _EGLConfig;
+   mtx_lock(_eglGlobal.Mutex);
 
-typedef struct _egl_context _EGLContext;
+   info = _eglGlobal.DeviceInfo;
 
-typedef struct _egl_device _EGLDevice;
+   if (!info) {
+      info = calloc(1, sizeof(_EGLDeviceInfo));
+      if (!info)
+         goto out;
 
-typedef struct _egl_display _EGLDisplay;
+      info->devices = NULL;
 
-typedef struct _egl_driver _EGLDriver;
+      _eglGlobal.DeviceInfo = info;
+   }
 
-typedef struct _egl_extensions _EGLExtensions;
+out:
+   mtx_unlock(_eglGlobal.Mutex);
 
-typedef struct _egl_image _EGLImage;
-
-typedef struct _egl_image_attribs _EGLImageAttribs;
-
-typedef struct _egl_mode _EGLMode;
-
-typedef struct _egl_resource _EGLResource;
-
-typedef struct _egl_screen _EGLScreen;
-
-typedef struct _egl_surface _EGLSurface;
-
-typedef struct _egl_sync _EGLSync;
-
-typedef struct _egl_thread_info _EGLThreadInfo;
-
-
-#ifdef __cplusplus
+   return info;
 }
-#endif
 
-#endif /* EGLTYPEDEFS_INCLUDED */
+/**
+ * Finish device management.
+ */
+void
+_eglFiniDeviceInfo(void)
+{
+   _EGLDeviceInfo *info;
+   _EGLDevice *device_list, *device;
+
+   /* atexit function is called with global mutex locked */
+
+   info = _eglGlobal.DeviceInfo;
+
+   if (!info)
+      return;
+
+   device_list = info->devices;
+   while (device_list) {
+      /* pop list head */
+      device = device_list;
+      device_list = device_list->Next;
+
+      free(device);
+   }
+
+   free(info);
+   _eglGlobal.DeviceInfo = NULL;
+}

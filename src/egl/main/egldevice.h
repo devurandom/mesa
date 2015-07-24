@@ -1,8 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2008 VMware, Inc.
- * Copyright 2009-2010 Chia-I Wu <olvaffe@gmail.com>
- * Copyright 2010 LunarG, Inc.
+ * Copyright 2015 Collabora
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -28,54 +26,22 @@
  **************************************************************************/
 
 
-#ifndef EGLTYPEDEFS_INCLUDED
-#define EGLTYPEDEFS_INCLUDED
-
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
-#include "eglcompiler.h"
+#ifndef EGLDEVICE_INCLUDED
+#define EGLDEVICE_INCLUDED
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef struct _egl_api _EGLAPI;
-
-typedef struct _egl_array _EGLArray;
-
-typedef struct _egl_config _EGLConfig;
-
-typedef struct _egl_context _EGLContext;
-
-typedef struct _egl_device _EGLDevice;
-
-typedef struct _egl_display _EGLDisplay;
-
-typedef struct _egl_driver _EGLDriver;
-
-typedef struct _egl_extensions _EGLExtensions;
-
-typedef struct _egl_image _EGLImage;
-
-typedef struct _egl_image_attribs _EGLImageAttribs;
-
-typedef struct _egl_mode _EGLMode;
-
-typedef struct _egl_resource _EGLResource;
-
-typedef struct _egl_screen _EGLScreen;
-
-typedef struct _egl_surface _EGLSurface;
-
-typedef struct _egl_sync _EGLSync;
-
-typedef struct _egl_thread_info _EGLThreadInfo;
+#include "egltypedefs.h"
 
 
-#ifdef __cplusplus
-}
-#endif
+struct _egl_device {
+   _EGLDevice *Next;
 
-#endif /* EGLTYPEDEFS_INCLUDED */
+   /* TODO */
+};
+
+
+extern void
+_eglFiniDeviceInfo(void);
+
+
+#endif /* EGLDEVICE_INCLUDED */
