@@ -36,12 +36,17 @@
 struct _egl_device {
    _EGLDevice *Next;
 
-   /* TODO */
+   void *Info;
 };
 
 
 extern void
 _eglFiniDeviceInfo(void);
+
+
+EGLBoolean
+_eglQueryDevicesEXT(EGLint max_devices, _EGLDevice **devices,
+                    EGLint *num_devices);
 
 
 #endif /* EGLDEVICE_INCLUDED */

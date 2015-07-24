@@ -93,6 +93,7 @@
 
 #include "eglglobals.h"
 #include "eglcontext.h"
+#include "egldevice.h"
 #include "egldisplay.h"
 #include "egltypedefs.h"
 #include "eglcurrent.h"
@@ -2384,7 +2385,11 @@ eglQueryDevicesEXT(EGLint max_devices,
                    EGLDeviceEXT *devices,
                    EGLint *num_devices)
 {
-   RETURN_EGL_SUCCESS(NULL, EGL_TRUE);
+   EGLBoolean ret;
+
+   ret = _eglQueryDevicesEXT(max_devices, (_EGLDevice **) devices, num_devices);
+
+   RETURN_EGL_EVAL(NULL, ret);
 }
 
 static int
