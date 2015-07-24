@@ -2368,7 +2368,14 @@ eglQueryDeviceAttribEXT(EGLDeviceEXT device,
                         EGLint attribute,
                         EGLAttrib *value)
 {
-   RETURN_EGL_SUCCESS(NULL, EGL_TRUE);
+   _EGLDevice *dev;
+   EGLBoolean ret;
+
+   _EGL_CHECK_DEVICE(device, EGL_FALSE, dev);
+
+   ret = _eglQueryDeviceAttribEXT(dev, attribute, value);
+
+   RETURN_EGL_EVAL(NULL, ret);
 }
 
 static const char * EGLAPIENTRY

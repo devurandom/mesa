@@ -48,6 +48,11 @@ _EGLDevice *
 _eglLookupDevice(EGLDeviceEXT device);
 
 
+EGLBoolean
+_eglQueryDeviceAttribEXT(_EGLDevice *device, EGLint attribute,
+                         EGLAttrib *value);
+
+
 const char *
 _eglQueryDeviceStringEXT(_EGLDevice *device, EGLint name);
 
