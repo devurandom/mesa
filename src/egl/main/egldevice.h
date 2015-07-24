@@ -62,4 +62,9 @@ _eglQueryDevicesEXT(EGLint max_devices, _EGLDevice **devices,
                     EGLint *num_devices);
 
 
+EGLBoolean
+_eglQueryDisplayAttribEXT(_EGLDriver *drv, _EGLDisplay *disp,
+                          EGLint attribute, EGLAttrib *value);
+
+
 #endif /* EGLDEVICE_INCLUDED */

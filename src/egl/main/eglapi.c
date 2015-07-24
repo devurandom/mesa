@@ -2397,7 +2397,18 @@ eglQueryDisplayAttribEXT(EGLDisplay dpy,
                          EGLint attribute,
                          EGLAttrib *value)
 {
-   RETURN_EGL_SUCCESS(NULL, EGL_TRUE);
+   _EGLDisplay *disp = _eglLockDisplay(dpy);
+   _EGLDriver *drv;
+   EGLBoolean ret;
+
+   _EGL_CHECK_DISPLAY(disp, EGL_FALSE, drv);
+
+   if (!disp->Initialized)
+      RETURN_EGL_ERROR(disp, EGL_NOT_INITIALIZED, EGL_FALSE);
+
+   ret = _eglQueryDisplayAttribEXT(drv, disp, attribute, value);
+
+   RETURN_EGL_EVAL(disp, ret);
 }
 
 static EGLBoolean EGLAPIENTRY

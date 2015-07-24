@@ -30,8 +30,12 @@
 #include <xf86drm.h>
 #endif
 
+#include <assert.h>
+#include <string.h>
+
 #include "eglcurrent.h"
 #include "egldevice.h"
+#include "egldriver.h"
 #include "eglglobals.h"
 #include "egllog.h"
 #include "egltypedefs.h"
@@ -186,6 +190,74 @@ _eglQueryDeviceStringEXT(_EGLDevice *device, EGLint name)
       _eglError(EGL_BAD_PARAMETER, "eglQueryDeviceStringEXT");
       return NULL;
    };
+}
+
+static EGLBoolean
+_eglQueryDeviceFromDisplay(_EGLDeviceInfo *info,
+                           _EGLDriver *drv,
+                           _EGLDisplay *disp,
+                           EGLAttrib *value)
+{
+#ifdef HAVE_LIBUDEV
+   const char *device_name = NULL;
+   _EGLDevice *dev;
+   UDEV_SYMBOL(const char *, udev_device_get_property_value,
+               (struct udev_device *, const char *));
+
+   if (dlsym_failed)
+      return EGL_FALSE;
+
+   if (!drv->QueryDeviceName)
+      return EGL_FALSE;
+
+   device_name = drv->QueryDeviceName(disp);
+
+   mtx_lock(_eglGlobal.Mutex);
+
+   assert(info->got_devices);
+
+   for (dev = info->devices; dev; dev = dev->Next) {
+      const char *devname = udev_device_get_property_value(
+         dev->Info, "DEVNAME");
+
+      if (!devname)
+         continue;
+
+      if (!strcmp(devname, device_name))
+         break;
+   }
+
+   mtx_unlock(_eglGlobal.Mutex);
+
+   *value = (EGLAttrib) dev;
+
+   return (dev) ? EGL_TRUE : EGL_FALSE;
+#else
+   return EGL_FALSE;
+#endif
+}
+
+EGLBoolean
+_eglQueryDisplayAttribEXT(_EGLDriver *drv,
+                          _EGLDisplay *disp,
+                          EGLint attribute,
+                          EGLAttrib *value)
+{
+   _EGLDeviceInfo *info;
+
+   info = _eglEnsureDeviceInfo(EGL_TRUE);
+   if (!info)
+      return _eglError(EGL_BAD_ALLOC, "eglQueryDisplayAttribEXT");
+
+   if (!value)
+      return _eglError(EGL_BAD_PARAMETER, "eglQueryDisplayAttribEXT");
+
+   switch (attribute) {
+   case EGL_DEVICE_EXT:
+      return _eglQueryDeviceFromDisplay(info, drv, disp, value);
+   default:
+      return _eglError(EGL_BAD_ATTRIBUTE, "eglQueryDisplayAttribEXT");
+   }
 }
 
 static EGLBoolean
