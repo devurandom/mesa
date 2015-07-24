@@ -44,6 +44,10 @@ extern void
 _eglFiniDeviceInfo(void);
 
 
+_EGLDevice *
+_eglLookupDevice(EGLDeviceEXT device);
+
+
 EGLBoolean
 _eglQueryDevicesEXT(EGLint max_devices, _EGLDevice **devices,
                     EGLint *num_devices);

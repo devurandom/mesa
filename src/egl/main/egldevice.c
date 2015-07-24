@@ -83,6 +83,32 @@ out:
 }
 
 /**
+ * Lookup an existing device in the device list.
+ * Return NULL if the device pointer doesn't already exist in the device list.
+ */
+_EGLDevice *
+_eglLookupDevice(EGLDeviceEXT device)
+{
+   _EGLDeviceInfo *info;
+   _EGLDevice *dev;
+
+   info = _eglEnsureDeviceInfo(EGL_FALSE);
+   if (!info)
+      return NULL;
+
+   mtx_lock(_eglGlobal.Mutex);
+
+   for (dev = info->devices; dev; dev = dev->Next) {
+      if (dev == device)
+         break;
+   }
+
+   mtx_unlock(_eglGlobal.Mutex);
+
+   return dev;
+}
+
+/**
  * Finish device management.
  */
 void
