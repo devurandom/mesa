@@ -42,11 +42,12 @@ typedef struct {
    _EGLDevice *devices;
    EGLBoolean got_devices;
 
+   const char *extensions;
+
 #ifdef HAVE_LIBDRM
    drmDevicePtr *drm_devices;
    int num_drm_devices;
 #endif
-
 } _EGLDeviceInfo;
 
 static EGLBoolean _eglFillDeviceList(_EGLDeviceInfo *info);
@@ -67,6 +68,10 @@ _eglEnsureDeviceInfo(EGLBoolean get_devices)
 
       info->devices = NULL;
       info->got_devices = EGL_FALSE;
+
+      /* update this string like in eglglobals.c to add support for a device
+       * extension */
+      info->extensions = "";
 
       _eglGlobal.DeviceInfo = info;
    }
@@ -140,6 +145,30 @@ _eglFiniDeviceInfo(void)
 
    free(info);
    _eglGlobal.DeviceInfo = NULL;
+}
+
+/**
+ * Get string about a specific device.
+ */
+const char *
+_eglQueryDeviceStringEXT(_EGLDevice *device, EGLint name)
+{
+   _EGLDeviceInfo *info;
+
+   info =_eglEnsureDeviceInfo(EGL_FALSE);
+   if (!info) {
+      _eglError(EGL_BAD_ALLOC, "eglQueryDeviceStringEXT");
+      return NULL;
+   }
+
+   switch (name) {
+   case EGL_EXTENSIONS:
+      return info->extensions;
+
+   default:
+      _eglError(EGL_BAD_PARAMETER, "eglQueryDeviceStringEXT");
+      return NULL;
+   };
 }
 
 static EGLBoolean

@@ -2375,7 +2375,14 @@ static const char * EGLAPIENTRY
 eglQueryDeviceStringEXT(EGLDeviceEXT device,
                         EGLint name)
 {
-   RETURN_EGL_SUCCESS(NULL, "eglQueryDeviceStringEXT");
+   _EGLDevice *dev;
+   const char *ret;
+
+   _EGL_CHECK_DEVICE(device, NULL, dev);
+
+   ret = _eglQueryDeviceStringEXT(dev, name);
+
+   RETURN_EGL_SUCCESS(NULL, ret);
 }
 
 static EGLBoolean EGLAPIENTRY
