@@ -2356,6 +2356,37 @@ eglQueryDebugKHR(EGLint attribute, EGLAttrib *value)
    return EGL_TRUE;
 }
 
+static EGLBoolean EGLAPIENTRY
+eglQueryDeviceAttribEXT(EGLDeviceEXT device,
+                        EGLint attribute,
+                        EGLAttrib *value)
+{
+   RETURN_EGL_SUCCESS(NULL, EGL_TRUE);
+}
+
+static const char * EGLAPIENTRY
+eglQueryDeviceStringEXT(EGLDeviceEXT device,
+                        EGLint name)
+{
+   RETURN_EGL_SUCCESS(NULL, "eglQueryDeviceStringEXT");
+}
+
+static EGLBoolean EGLAPIENTRY
+eglQueryDisplayAttribEXT(EGLDisplay dpy,
+                         EGLint attribute,
+                         EGLAttrib *value)
+{
+   RETURN_EGL_SUCCESS(NULL, EGL_TRUE);
+}
+
+static EGLBoolean EGLAPIENTRY
+eglQueryDevicesEXT(EGLint max_devices,
+                   EGLDeviceEXT *devices,
+                   EGLint *num_devices)
+{
+   RETURN_EGL_SUCCESS(NULL, EGL_TRUE);
+}
+
 static int
 _eglFunctionCompare(const void *key, const void *elem)
 {

@@ -60,6 +60,9 @@ struct _egl_global _eglGlobal =
    " EGL_EXT_platform_x11"
 #endif
 #ifdef HAVE_DRM_PLATFORM
+   " EGL_EXT_device_base"
+   " EGL_EXT_device_query"
+   " EGL_EXT_device_enumeration"
    " EGL_MESA_platform_gbm"
 #endif
 #ifdef HAVE_SURFACELESS_PLATFORM
